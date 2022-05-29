@@ -11,22 +11,23 @@ MongoClient.connect(connectionString, {
     .then(client => {
         console.log("Connected to database")
         const db = client.db('star-wars-quotes')
-        app.use()
-        app.get()
-        app.post()
-        app.listen()
+        const quotesCollection = db.collection('quotes')
+
+        app.get('/', (req, res) => { //request, response
+            console.log(__dirname)
+            res.sendFile(__dirname + "/index.html")
+        })
+        
+        app.post('/quotes', (req, res) => {
+            quotesCollection.insertOne(req.body)
+                .then(result => {
+                    res.redirect('/')
+                })
+                .catch(error => console.error(error))
+        })
+        
+        app.listen(3000, function() {
+            console.log("listening on 3000")
+        })
     })
     .catch(error => console.error(error))
-
-app.get('/', (req, res) => { //request, response
-    console.log(__dirname)
-    res.sendFile(__dirname + "/index.html")
-})
-
-app.post('/quotes', (req, res) => {
-    console.log(req.body)
-})
-
-app.listen(3000, function() {
-    console.log("listening on 3000")
-})
