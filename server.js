@@ -14,6 +14,12 @@ MongoClient.connect(connectionString, {
         const quotesCollection = db.collection('quotes')
 
         app.get('/', (req, res) => { //request, response
+            const cursor = db.collection('quotes').find().toArray()
+            .then(results => {
+                console.log(results)
+            })
+            .catch(error => console.error(error))
+
             console.log(__dirname)
             res.sendFile(__dirname + "/index.html")
         })
