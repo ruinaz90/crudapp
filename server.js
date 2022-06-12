@@ -4,6 +4,7 @@ const bodyParser = require('body-parser')
 const app = express()
 const connectionString = 'mongodb+srv://admin:pass@cluster0.1brh5bj.mongodb.net/?retryWrites=true&w=majority'
 
+app.set('view engine', 'ejs')
 app.use(bodyParser.urlencoded({ extended: true}))
 
 MongoClient.connect(connectionString, {
@@ -11,17 +12,13 @@ MongoClient.connect(connectionString, {
     .then(client => {
         console.log("Connected to database")
         const db = client.db('star-wars-quotes')
-        const quotesCollection = db.collection('quotes')
 
         app.get('/', (req, res) => { //request, response
-            const cursor = db.collection('quotes').find().toArray()
+            db.collection('quotes').find().toArray()
             .then(results => {
-                console.log(results)
+                res.render('index.ejs', {quotes: results})
             })
             .catch(error => console.error(error))
-
-            console.log(__dirname)
-            res.sendFile(__dirname + "/index.html")
         })
         
         app.post('/quotes', (req, res) => {
