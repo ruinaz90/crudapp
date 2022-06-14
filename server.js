@@ -6,12 +6,15 @@ const connectionString = 'mongodb+srv://admin:pass@cluster0.1brh5bj.mongodb.net/
 
 app.set('view engine', 'ejs')
 app.use(bodyParser.urlencoded({ extended: true}))
+app.use(express.static('public'))
+app.use(bodyParser.json())
 
 MongoClient.connect(connectionString, {
     useUnifiedTopology: true })
     .then(client => {
         console.log("Connected to database")
         const db = client.db('star-wars-quotes')
+        const quotesCollection = db.collection('quotes')
 
         app.get('/', (req, res) => { //request, response
             db.collection('quotes').find().toArray()
@@ -25,6 +28,25 @@ MongoClient.connect(connectionString, {
             quotesCollection.insertOne(req.body)
                 .then(result => {
                     res.redirect('/')
+                })
+                .catch(error => console.error(error))
+        })
+
+        app.put('/quotes', (req, res) => {
+            quotesCollection.findOneAndUpdate(
+                {name: 'Yoda'},
+                {
+                    $set: {
+                        name: req.body.name,
+                        quote: req.body.quote
+                    }
+                },
+                {
+                    upsert: true
+                }
+            )
+                .then(result => {
+                    res.json('Success')
                 })
                 .catch(error => console.error(error))
         })
