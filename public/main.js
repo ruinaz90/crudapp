@@ -20,7 +20,7 @@ update.addEventListener('click', _ => {
 
 deleteButton.addEventListener('click', _ => {
     fetch('/quotes', {
-        method: delete,
+        method: 'delete',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             name: 'Darth Vadar'
